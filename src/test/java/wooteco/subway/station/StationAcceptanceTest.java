@@ -31,14 +31,15 @@ public class StationAcceptanceTest extends AcceptanceTest {
 
         // when
         ExtractableResponse<Response> response = createStationWithName(강남역);
+        StationResponse stationResponse = response.as(StationResponse.class);
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
         assertThat(response.contentType()).isEqualTo(MediaType.APPLICATION_JSON_VALUE);
         assertThat(response.header("Location")).isEqualTo("/stations/1");
 
-        assertThat(response.body().jsonPath().getString("id")).isEqualTo("1");
-        assertThat(response.body().jsonPath().getString("name")).isEqualTo(강남역);
+        assertThat(stationResponse).usingRecursiveComparison()
+                .isEqualTo(new StationResponse(1L, "강남역"));
     }
 
     @DisplayName("기존에 존재하는 지하철역 이름으로 지하철역을 생성한다.")
